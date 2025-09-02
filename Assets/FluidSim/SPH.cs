@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 
 [System.Serializable]
@@ -98,8 +99,8 @@ public class SPH : MonoBehaviour
 
     private void Update()
     {
-        material.setFloat(SizeProperty, particleRenderSize);
-        material.setBuffer(ParticlesBufferProperty, _particleBuffer);
+        material.SetFloat(SizeProperty, particleRenderSize);
+        material.SetBuffer(ParticlesBufferProperty, _particleBuffer);
 
         if (showSpheres)
         {
