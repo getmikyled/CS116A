@@ -1,5 +1,5 @@
 // Each #kernel tells which function to compile; you can have many kernels
-#pragma kernel FluidsIntegrate
+#pragma kernel Integrate                // Integrate the particle
 
 struct Particle
 {
@@ -25,17 +25,14 @@ float radius5;
 float pi;
 int particleLength;
 float timeStep;
-float3 boxSize;
 
 [numthreads(100,1,1)]
-void FluidsIntegrate (uint3 id: SV_PATCHTHREADID)
+void Integrate (uint3 id: SV_DISPATCHTHREADID)
 {
     // Set current force to gravity
     _particles[id.x].currentForce = float3(0, -9.81 * particleMass, 0); 
-    
+
+    // Integrate particle
     float3 velocity = _particles[id.x].velocity + ((_particles[id.x].currentForce/particleMass) * timeStep); // (v + at)
     _particles[id.x].position = velocity * timeStep;
-
-    // Add particle boundaries here if yo uwant
-    
 }
