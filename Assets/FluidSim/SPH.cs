@@ -69,16 +69,14 @@ public class SPH : MonoBehaviour
         List<Particle> _particles = new List<Particle>();
 
         for (int x = 0; x < numToSpawn.x; x++)
-        {
+        {    
             for (int y = 0; y < numToSpawn.y; y++)
             {
                 for (int z = 0; z < numToSpawn.z; z++)
                 {
-                    Vector3 spawnPos = spawnPoint + new Vector3(x * particleRadius * 2, y * particleRadius * 2, z * particleRadius * 2);
-                    Particle p = new Particle
-                    {
-                        position = spawnPos
-                    };
+                    Vector3 spawnPos = spawnPoint + new Vector3(x * particleRadius * 20, y * particleRadius * 20, z * particleRadius * 20);
+                    Debug.Log(spawnPos);
+                    Particle p = new Particle { position = spawnPos };
                     _particles.Add(p);
                 }
             }
