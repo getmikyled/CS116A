@@ -1,14 +1,41 @@
 // Each #kernel tells which function to compile; you can have many kernels
-#pragma kernel CSMain
+#pragma kernel FluidsIntegrate
 
-// Create a RenderTexture with enableRandomWrite flag and set it
-// with cs.SetTexture
-RWTexture2D<float4> Result;
-
-[numthreads(8,8,1)]
-void CSMain (uint3 id : SV_DispatchThreadID)
+struct Particle
 {
-    // TODO: insert actual code here!
+    float pressure;
+    float density;
+    float3 currentForce;
+    float3 velocity;
+    float3 position;
+};
 
-    Result[id.xy] = float4(id.x & id.y, (id.x & 15)/15.0, (id.y & 15)/15.0, 0.0);
+RWStructuredBuffer<Particle> _particles;
+
+// Declare variables
+float particleMass;
+float viscosity;
+float gasConstant;
+float restDensity;
+float radius;
+float radius2;
+float radius3;
+float radius4;
+float radius5;
+float pi;
+int particleLength;
+float timeStep;
+float3 boxSize;
+
+[numthreads(100,1,1)]
+void Integrate (uint3 id: SV_PATCHTHREADID)
+{
+    // Set current force to gravity
+    _particles[id.x].currentForce = float3(0, -9.81 * particleMass, 0); 
+    
+    float3 velocity = _particles[id.x].velocity + ((_particles[id.x].currentForce/particleMass) * timeStep); // (v + at)
+    _particles[id.x].position = velocity * timeStep;
+
+    // Add particle boundaries here if yo uwant
+    
 }
