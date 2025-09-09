@@ -1,8 +1,12 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Collections;
+using System.Runtime.InteropServices;
+
 
 
 [System.Serializable]
+[StructLayout(LayoutKind.Sequential, Size=44)]
 public struct Particle {
     public float pressure;
     public float density;
@@ -34,13 +38,14 @@ public class SPH : MonoBehaviour
     public float particleRenderSize = 8.0f;
     public Material material;
 
+
     [Header("Compute")]
     public ComputeShader shader;
     public Particle[] particles;
 
 
     private ComputeBuffer _argsBuffer;
-    private ComputeBuffer _particleBuffer;
+    private ComputeBuffer _particlesBuffer;
 
     private void Awake()
     {
@@ -58,8 +63,8 @@ public class SPH : MonoBehaviour
         _argsBuffer.SetData(args);
 
         // Set up particle buffer
-        _particleBuffer = new ComputeBuffer(totalParticles, 44);
-        _particleBuffer.SetData(particles);
+        _particlesBuffer = new ComputeBuffer(totalParticles, 44);
+        _particlesBuffer.SetData(particles);
 
     }
 
@@ -85,11 +90,17 @@ public class SPH : MonoBehaviour
         particles = _particles.ToArray();
     }
 
-    // private void OnDrawGizmoz()
-    // {
-    //     Gizmos.color = Color.blue;
-    //     Gizmos.DrawWireCube
-    // }
+    private void OnDrawGizmoz()
+    {
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireCube(Vector3.zero, boxSize);
+
+        if (!Application.isPlaying)
+        {
+            Gizmos.color = Color.cyan;
+            Gizmos.DrawWireSphere(spawnCenter, 0.1f);
+        }
+    }
 
     private static readonly int SizeProperty = Shader.PropertyToID("_size");
     private static readonly int ParticlesBufferProperty = Shader.PropertyToID("_particlesBuffer");
@@ -98,7 +109,7 @@ public class SPH : MonoBehaviour
     private void Update()
     {
         material.SetFloat(SizeProperty, particleRenderSize);
-        material.SetBuffer(ParticlesBufferProperty, _particleBuffer);
+        material.SetBuffer(ParticlesBufferProperty, _particlesBuffer);
 
         if (showSpheres)
         {
